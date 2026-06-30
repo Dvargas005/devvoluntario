@@ -1,0 +1,210 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ========================
+// Better Auth tables
+// ========================
+
+model user {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean
+  image         String?
+  displayName   String?
+  isPublic      Boolean   @default(false)
+  createdAt     DateTime
+  updatedAt     DateTime
+
+  sessions           session[]
+  accounts           account[]
+  ownedInitiatives   Initiative[] @relation("OwnedInitiatives")
+  createdInitiatives Initiative[] @relation("CreatedInitiatives")
+  auditEntries       AuditEntry[]
+  volunteer          Volunteer?
+}
+
+model session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+}
+
+model verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime
+  updatedAt  DateTime
+}
+
+// ========================
+// Enums
+// ========================
+
+enum InitiativeStatus {
+  IDEA
+  IN_DEVELOPMENT
+  IN_PRODUCTION
+  PAUSED
+}
+
+enum RepoVisibility {
+  PUBLIC
+  PRIVATE
+  NONE
+}
+
+enum Platform {
+  WEB
+  MOBILE
+  BOT
+  API
+  OTHER
+}
+
+enum Category {
+  RESCUE_SEARCH
+  MISSING_PERSONS
+  SHELTERS
+  DONATIONS_LOGISTICS
+  HEALTH_TELEMEDICINE
+  DAMAGE_MAPPING
+  INFO_COMMS
+  VOLUNTEERING
+  FAMILY_REUNIFICATION
+  OPEN_DATA_INFRA
+}
+
+enum DevRole {
+  DESIGN_UX
+  FRONTEND
+  BACKEND
+  QA
+  PM_PO
+  DATA
+  INFRA_DEVOPS
+  CONTENT_LEGAL
+}
+
+enum Region {
+  YARACUY
+  CARABOBO
+  LA_GUAIRA
+  DISTRITO_CAPITAL
+  ARAGUA
+  COJEDES
+  LARA
+  FALCON
+  NACIONAL
+  OTRO
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  CLAIM
+  REVERT
+}
+
+// ========================
+// App models
+// ========================
+
+model Initiative {
+  id              String           @id @default(cuid())
+  name            String
+  tagline         String?
+  description     String           @db.Text
+  logoUrl         String?
+
+  status          InitiativeStatus @default(IN_DEVELOPMENT)
+  repoVisibility  RepoVisibility   @default(NONE)
+  repoUrl         String?
+  liveUrl         String?
+  contactInfo     String?
+
+  platforms       Platform[]
+  techStack       String[]
+  primaryCategory Category
+  secondaryCats   Category[]
+  coverage        Region[]
+
+  needsHelp       Boolean          @default(false)
+  neededRoles     DevRole[]
+
+  ownerUserId     String?
+  owner           user?            @relation("OwnedInitiatives", fields: [ownerUserId], references: [id])
+
+  createdById     String
+  createdBy       user             @relation("CreatedInitiatives", fields: [createdById], references: [id])
+
+  rawAnalysis     Json?
+  lastAnalyzedAt  DateTime?
+
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  audit           AuditEntry[]
+
+  @@index([primaryCategory])
+  @@index([status])
+  @@index([needsHelp])
+}
+
+model AuditEntry {
+  id            String      @id @default(cuid())
+  initiativeId  String
+  initiative    Initiative  @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  userId        String
+  user          user        @relation(fields: [userId], references: [id])
+  action        AuditAction
+  changedFields Json
+  createdAt     DateTime    @default(now())
+
+  @@index([initiativeId, createdAt])
+}
+
+model Volunteer {
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  user           user      @relation(fields: [userId], references: [id])
+  displayName    String
+  roles          DevRole[]
+  skills         String[]
+  availability   String?
+  contactPref    String?
+  listedPublicly Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
