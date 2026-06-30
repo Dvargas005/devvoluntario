@@ -2,24 +2,91 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ========================================================================
+   DEV VOLUNTARIO — Design Tokens
+   Estética: editorial, sobria, fondo negro.
+   ======================================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --- Colores base --- */
+  --color-bg: #000000;
+  --color-text: #ffffff;
+  --color-text-muted: #ececec;
+
+  /* --- Acentos (PLACEHOLDER — TODO: hex final de marca) --- */
+  --color-fresh-mint: #3DDC84;    /* TODO: hex final de marca */
+  --color-slate-blue: #5B7C99;    /* TODO: hex final de marca */
+  --color-forest-green: #1B4332;  /* TODO: hex final de marca */
+
+  /* --- Bordes y superficies sutiles --- */
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-surface: rgba(255, 255, 255, 0.04);
+  --color-surface-hover: rgba(255, 255, 255, 0.08);
+
+  /* --- Escala de espaciado modular (base 8px) --- */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+  --space-7: 64px;
+  --space-8: 80px;
+  --space-9: 104px;
+
+  /* --- Tipografía --- */
+  --font-serif: var(--font-brawler), Georgia, 'Times New Roman', serif;
+  --font-sans: var(--font-roboto), system-ui, -apple-system, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* --- Base resets --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  color: var(--color-text);
+  background: var(--color-bg);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* --- CircularText component styles --- */
+.circular-text {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  margin: 0 auto;
+  font-weight: 900;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  position: relative;
+  transform-origin: 50% 50%;
+  -webkit-transform-origin: 50% 50%;
+}
+
+.circular-text span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: inline-block;
+  font-size: 14px;
+  transition: all 0.5s cubic-bezier(0, 0, 0, 1);
+}
+
+/* --- Utility layers --- */
 @layer utilities {
   .text-balance {
     text-wrap: balance;

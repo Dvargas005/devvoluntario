@@ -1,20 +1,24 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Brawler, Roboto } from "next/font/google";
+import { SmoothScroll } from "@/components/SmoothScroll";
 import "./globals.css";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const brawler = Brawler({
+  subsets: ["latin"],
+  weight: "700",
+  variable: "--font-brawler",
+  display: "swap",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-roboto",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Dev Voluntario",
+  title: "DeVVoluntario",
   description:
     "Directorio de iniciativas tecnológicas en respuesta al doblete sísmico de Venezuela",
 };
@@ -25,11 +29,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+    <html lang="es" className={`${brawler.variable} ${roboto.variable}`}>
+      <body>
+        <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>
   );

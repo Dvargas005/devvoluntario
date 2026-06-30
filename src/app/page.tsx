@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
+import CircularText from "@/components/CircularText";
 
 const CATEGORY_LABELS: Record<string, string> = {
   RESCUE_SEARCH: "Rescate y búsqueda",
@@ -38,68 +39,119 @@ export default async function Home() {
   });
 
   return (
-    <main className="min-h-screen p-4 sm:p-8 font-[family-name:var(--font-geist-sans)]">
-      <header className="max-w-3xl mx-auto mb-8">
-        <h1 className="text-3xl font-bold">Dev Voluntario</h1>
-        <p className="text-gray-600 mt-2">
-          Directorio de iniciativas tecnológicas en respuesta al doblete sísmico
-          de Venezuela.
-        </p>
-        <div className="mt-4 flex gap-3">
-          <Link
-            href="/login"
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 text-sm"
-          >
-            Acceder
-          </Link>
-        </div>
-      </header>
+    <main className="min-h-screen">
+      <div className="flex flex-col lg:flex-row min-h-screen">
+        {/* ─── Columna izquierda: sticky sidebar ─── */}
+        <aside className="w-full lg:w-[320px] xl:w-[360px] shrink-0 px-s3 py-s5 lg:px-s5 lg:py-s7 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto border-b lg:border-b-0 lg:border-r border-border">
+          <div className="flex flex-col gap-s5 lg:gap-s7 max-w-md mx-auto lg:max-w-none">
+            {/* Logo */}
+            <div>
+              <Link href="/" className="block">
+                <h1
+                  className="font-serif text-4xl lg:text-5xl font-bold tracking-tight"
+                  style={{ letterSpacing: "-0.06em" }}
+                >
+                  DeVVoluntario
+                </h1>
+              </Link>
+            </div>
 
-      <section className="max-w-3xl mx-auto">
-        <h2 className="text-xl font-semibold mb-4">Iniciativas</h2>
-
-        {initiatives.length === 0 ? (
-          <div className="border border-dashed rounded-lg p-8 text-center text-gray-500">
-            <p className="text-lg mb-2">Aún no hay iniciativas registradas.</p>
-            <p className="text-sm">
-              Sé el primero en agregar una iniciativa al directorio.
+            {/* Descripción */}
+            <p className="text-muted text-base leading-relaxed max-w-[28ch] lg:max-w-none">
+              Directorio de iniciativas tecnológicas en respuesta al doblete
+              sísmico de Venezuela.
             </p>
+
+            {/* Acciones */}
+            <div className="flex gap-s2">
+              <Link
+                href="/login"
+                className="text-sm text-muted hover:text-foreground transition-colors border-b border-border hover:border-foreground pb-0.5"
+              >
+                Acceder
+              </Link>
+            </div>
+
+            {/* Sello circular giratorio */}
+            <div className="hidden lg:flex justify-center py-s3">
+              <CircularText
+                text="UNIDOS POR VENEZUELA * GRUPO TECNOLOGIA Y COMUNICACION TERREMOTO * "
+                spinDuration={20}
+                onHover="speedUp"
+              />
+            </div>
           </div>
-        ) : (
-          <ul className="space-y-3">
-            {initiatives.map((ini) => (
-              <li key={ini.id}>
-                <div className="border rounded-lg p-4 hover:border-gray-400 transition-colors">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <h3 className="font-semibold">{ini.name}</h3>
+        </aside>
+
+        {/* ─── Columnas 2-3-4: grid de iniciativas ─── */}
+        <section className="flex-1 px-s3 py-s5 lg:px-s7 lg:py-s7">
+          <div className="max-w-5xl">
+            <header className="mb-s5 lg:mb-s7">
+              <h2 className="font-serif text-2xl lg:text-3xl font-bold">
+                Iniciativas
+              </h2>
+              <p className="text-muted text-sm mt-s1">
+                Proyectos tecnológicos activos tras el terremoto
+              </p>
+            </header>
+
+            {initiatives.length === 0 ? (
+              <div className="border border-dashed border-border rounded-lg p-s7 lg:p-s9 text-center">
+                <p className="text-muted text-lg mb-s2">
+                  Aún no hay iniciativas registradas.
+                </p>
+                <p className="text-sm text-muted/60">
+                  Sé el primero en agregar una iniciativa al directorio.
+                </p>
+              </div>
+            ) : (
+              <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-s3 lg:gap-s4">
+                {initiatives.map((ini) => (
+                  <li key={ini.id}>
+                    <article className="group border border-border rounded-lg p-s3 lg:p-s4 hover:bg-surface-hover transition-colors h-full flex flex-col">
+                      <div className="flex items-start justify-between gap-s2 mb-s2">
+                        <h3 className="font-serif font-bold text-lg leading-snug">
+                          {ini.name}
+                        </h3>
+                        {ini.needsHelp && (
+                          <span className="shrink-0 text-xs text-fresh-mint border border-fresh-mint/30 px-2 py-0.5 rounded-full">
+                            Necesita apoyo
+                          </span>
+                        )}
+                      </div>
+
                       {ini.tagline && (
-                        <p className="text-gray-600 text-sm mt-1">
+                        <p className="text-muted text-sm leading-relaxed mb-s3 flex-1">
                           {ini.tagline}
                         </p>
                       )}
-                    </div>
-                    {ini.needsHelp && (
-                      <span className="shrink-0 text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">
-                        Necesita apoyo
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex gap-2 mt-3 flex-wrap">
-                    <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-                      {CATEGORY_LABELS[ini.primaryCategory] ??
-                        ini.primaryCategory}
-                    </span>
-                    <span className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
-                      {STATUS_LABELS[ini.status] ?? ini.status}
-                    </span>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+
+                      <div className="flex gap-2 flex-wrap mt-auto">
+                        <span className="text-xs text-muted/80 border border-border px-2 py-0.5 rounded">
+                          {CATEGORY_LABELS[ini.primaryCategory] ??
+                            ini.primaryCategory}
+                        </span>
+                        <span className="text-xs text-slate-blue border border-slate-blue/30 px-2 py-0.5 rounded">
+                          {STATUS_LABELS[ini.status] ?? ini.status}
+                        </span>
+                      </div>
+                    </article>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+      </div>
+
+      {/* Sello circular solo visible en mobile (abajo del contenido) */}
+      <div className="flex lg:hidden justify-center py-s7 border-t border-border">
+        <CircularText
+          text="UNIDOS POR VENEZUELA * GRUPO TECNOLOGIA Y COMUNICACION TERREMOTO * "
+          spinDuration={20}
+          onHover="speedUp"
+        />
+      </div>
     </main>
   );
 }
