@@ -29,12 +29,13 @@ export const auth = betterAuth({
   plugins: [
     magicLink({
       sendMagicLink: async ({ email, url }) => {
-        if (!resendClient) {
-          console.warn("RESEND_API_KEY not set — magic link:", url);
+        const emailFrom = process.env.EMAIL_FROM;
+        if (!resendClient || !emailFrom) {
+          console.warn("RESEND_API_KEY or EMAIL_FROM not set — magic link:", url);
           return;
         }
         await resendClient.emails.send({
-          from: process.env.EMAIL_FROM || "onboarding@resend.dev",
+          from: emailFrom,
           to: email,
           subject: "Tu enlace de acceso — Dev Voluntario",
           html: `<p>Haz clic para acceder a Dev Voluntario:</p><a href="${url}">${url}</a>`,

@@ -141,7 +141,19 @@ export default async function Home({
             </p>
 
             {/* Acciones */}
-            <div className="flex gap-s2">
+            <div className="flex flex-wrap gap-s2">
+              <Link
+                href="/iniciativas/nueva"
+                className="text-sm text-fresh-mint hover:text-foreground transition-colors border-b border-fresh-mint/30 hover:border-foreground/40 pb-0.5"
+              >
+                + Registrar iniciativa
+              </Link>
+              <Link
+                href="/voluntarios"
+                className="text-sm text-muted hover:text-fresh-mint transition-colors border-b border-border hover:border-fresh-mint/40 pb-0.5"
+              >
+                Voluntarios
+              </Link>
               <Link
                 href="/login"
                 className="text-sm text-muted hover:text-fresh-mint transition-colors border-b border-border hover:border-fresh-mint/40 pb-0.5"

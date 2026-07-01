@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { getSession } from "@/lib/auth-server";
+import { claimInitiative } from "@/app/actions/initiatives";
 import {
   CATEGORY_LABELS,
   STATUS_LABELS,
@@ -35,18 +37,21 @@ export default async function InitiativeDetailPage({
 }: {
   params: { id: string };
 }) {
-  const initiative = await prisma.initiative.findUnique({
-    where: { id: params.id },
-    include: {
-      createdBy: { select: { displayName: true } },
-      owner: { select: { displayName: true } },
-      audit: {
-        orderBy: { createdAt: "desc" },
-        take: 20,
-        include: { user: { select: { displayName: true } } },
+  const [initiative, session] = await Promise.all([
+    prisma.initiative.findUnique({
+      where: { id: params.id },
+      include: {
+        createdBy: { select: { displayName: true } },
+        owner: { select: { displayName: true } },
+        audit: {
+          orderBy: { createdAt: "desc" },
+          take: 20,
+          include: { user: { select: { displayName: true } } },
+        },
       },
-    },
-  });
+    }),
+    getSession(),
+  ]);
 
   if (!initiative) notFound();
 
@@ -54,6 +59,9 @@ export default async function InitiativeDetailPage({
   const cleanDescription = isUnverified
     ? initiative.description.slice(UNVERIFIED_PREFIX.length).trim()
     : initiative.description;
+
+  const isLoggedIn = !!session;
+  const canClaim = isLoggedIn && !initiative.ownerUserId;
 
   // ─── Solapamientos: misma categoría y/o misma zona ───
   const [sameCategory, sameRegion] = await Promise.all([
@@ -79,21 +87,30 @@ export default async function InitiativeDetailPage({
       : Promise.resolve([]),
   ]);
 
-  // Deduplicate sameRegion (remove those already in sameCategory)
   const sameCategoryIds = new Set(sameCategory.map((i) => i.id));
-  const uniqueSameRegion = sameRegion.filter((i) => !sameCategoryIds.has(i.id));
+  const uniqueSameRegion = sameRegion.filter(
+    (i) => !sameCategoryIds.has(i.id)
+  );
 
   return (
     <main className="min-h-screen px-s3 py-s5 lg:px-s7 lg:py-s7">
       <div className="max-w-3xl mx-auto">
         {/* Nav */}
-        <nav className="mb-s5">
+        <nav className="flex items-center justify-between mb-s5">
           <Link
             href="/"
             className="text-sm text-muted hover:text-fresh-mint transition-colors"
           >
             &larr; Volver al directorio
           </Link>
+          {isLoggedIn && (
+            <Link
+              href={`/iniciativas/${initiative.id}/editar`}
+              className="text-sm text-muted hover:text-fresh-mint transition-colors border-b border-border hover:border-fresh-mint/40 pb-0.5"
+            >
+              Editar
+            </Link>
+          )}
         </nav>
 
         {/* Unverified banner */}
@@ -190,21 +207,17 @@ export default async function InitiativeDetailPage({
           {/* Enlaces */}
           <DetailSection title="Enlaces">
             {initiative.liveUrl && (
-              <DetailLink
-                label="Sitio"
-                href={initiative.liveUrl}
-              />
+              <DetailLink label="Sitio" href={initiative.liveUrl} />
             )}
             {initiative.repoVisibility === "PUBLIC" && initiative.repoUrl && (
-              <DetailLink
-                label="Repositorio"
-                href={initiative.repoUrl}
-              />
+              <DetailLink label="Repositorio" href={initiative.repoUrl} />
             )}
             {!initiative.liveUrl &&
               !(
                 initiative.repoVisibility === "PUBLIC" && initiative.repoUrl
-              ) && <p className="text-muted/60 text-sm">Sin enlaces públicos</p>}
+              ) && (
+                <p className="text-muted/60 text-sm">Sin enlaces públicos</p>
+              )}
           </DetailSection>
 
           {/* Cobertura */}
@@ -266,17 +279,21 @@ export default async function InitiativeDetailPage({
           )}
         </div>
 
-        {/* Autor (anti-doxeo: solo displayName) */}
-        <div className="text-sm text-muted/60 mb-s7">
+        {/* Autor + timestamps (anti-doxeo: solo displayName) */}
+        <div className="text-sm text-muted/60 mb-s4">
           Registrada por{" "}
           <span className="text-muted">
             {initiative.createdBy.displayName || "Anónimo"}
           </span>
+          <span className="text-muted/40"> · </span>
+          <time className="text-muted/40">
+            {formatDate(initiative.createdAt)}
+          </time>
           {initiative.owner &&
             initiative.owner.displayName !==
               initiative.createdBy.displayName && (
               <>
-                {" · "}
+                <span className="text-muted/40"> · </span>
                 Mantenida por{" "}
                 <span className="text-muted">
                   {initiative.owner.displayName || "Anónimo"}
@@ -284,6 +301,31 @@ export default async function InitiativeDetailPage({
               </>
             )}
         </div>
+
+        {/* Claim ownership */}
+        {canClaim && (
+          <div className="mb-s7">
+            <form action={claimInitiative}>
+              <input type="hidden" name="id" value={initiative.id} />
+              <button
+                type="submit"
+                className="text-sm text-slate-blue hover:text-fresh-mint transition-colors border-b border-slate-blue/30 hover:border-fresh-mint/40 pb-0.5"
+              >
+                ¿Es tu proyecto? Reclamar autoría
+              </button>
+            </form>
+          </div>
+        )}
+        {!canClaim && !initiative.ownerUserId && !isLoggedIn && (
+          <div className="mb-s7">
+            <Link
+              href="/login"
+              className="text-sm text-slate-blue hover:text-fresh-mint transition-colors border-b border-slate-blue/30 hover:border-fresh-mint/40 pb-0.5"
+            >
+              ¿Es tu proyecto? Inicia sesión para reclamar autoría
+            </Link>
+          </div>
+        )}
 
         {/* ─── Solapamientos ─── */}
         {(sameCategory.length > 0 || uniqueSameRegion.length > 0) && (
@@ -374,13 +416,7 @@ export default async function InitiativeDetailPage({
                     </span>
                   </div>
                   <time className="text-[11px] text-muted/40">
-                    {new Date(entry.createdAt).toLocaleDateString("es-VE", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {formatDate(entry.createdAt)}
                   </time>
                 </li>
               ))}
@@ -451,4 +487,14 @@ function formatAction(action: string): string {
     default:
       return action;
   }
+}
+
+function formatDate(date: Date): string {
+  return new Date(date).toLocaleDateString("es-VE", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
