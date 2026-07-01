@@ -120,7 +120,7 @@ export default async function Home({
     <main className="min-h-screen">
       <div className="flex flex-col lg:flex-row min-h-screen">
         {/* ─── Columna izquierda: sticky sidebar ─── */}
-        <aside className="w-full lg:w-[320px] xl:w-[360px] shrink-0 px-s3 py-s5 lg:px-s5 lg:py-s7 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto border-b lg:border-b-0 lg:border-r border-border">
+        <aside className="w-full lg:w-[320px] xl:w-[360px] shrink-0 px-s2 sm:px-s3 py-s5 lg:px-s5 lg:py-s7 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto border-b lg:border-b-0 lg:border-r border-border overflow-x-hidden">
           <div className="flex flex-col gap-s5 lg:gap-s7 max-w-md mx-auto lg:max-w-none">
             {/* Logo */}
             <div>
@@ -135,10 +135,16 @@ export default async function Home({
             </div>
 
             {/* Descripción */}
-            <p className="text-muted text-base leading-relaxed max-w-[28ch] lg:max-w-none">
+            <p className="text-muted text-sm sm:text-base leading-relaxed">
               Directorio de iniciativas tecnológicas en respuesta al doblete
               sísmico de Venezuela.
             </p>
+            <Link
+              href="/acerca"
+              className="text-sm text-muted/60 hover:text-fresh-mint transition-colors"
+            >
+              Leer más &rarr;
+            </Link>
 
             {/* Acciones */}
             <div className="flex flex-wrap gap-s2">
@@ -166,7 +172,7 @@ export default async function Home({
         </aside>
 
         {/* ─── Columnas 2-3-4: grid de iniciativas ─── */}
-        <section className="flex-1 px-s3 py-s5 lg:px-s7 lg:py-s7">
+        <section className="flex-1 px-s2 sm:px-s3 py-s5 lg:px-s7 lg:py-s7 overflow-x-hidden">
           <div className="max-w-5xl">
             <header className="mb-s4 lg:mb-s5">
               <h2 className="font-serif text-2xl lg:text-3xl font-bold">
@@ -185,7 +191,7 @@ export default async function Home({
 
             {/* Grid de cards */}
             {initiatives.length === 0 ? (
-              <div className="border border-dashed border-border rounded-lg p-s7 lg:p-s9 text-center">
+              <div className="border border-dashed border-border rounded-lg p-s4 sm:p-s7 lg:p-s9 text-center">
                 <p className="text-muted text-lg mb-s2">
                   No se encontraron iniciativas con estos filtros.
                 </p>
@@ -207,10 +213,10 @@ export default async function Home({
                       ini.description.startsWith(UNVERIFIED_PREFIX);
                     return (
                       <li key={ini.id}>
-                          <article className="group relative border border-border rounded-lg p-s3 lg:p-s4 hover:bg-surface-hover hover:border-fresh-mint/20 transition-colors h-full flex flex-col">
+                          <article className="group relative border border-border rounded-lg p-s2 sm:p-s3 lg:p-s4 hover:bg-surface-hover hover:border-fresh-mint/20 transition-colors h-full flex flex-col">
                             {/* Header: nombre + badges + external link */}
-                            <div className="flex items-start justify-between gap-s1 mb-s1">
-                              <h3 className="font-serif font-bold text-lg leading-snug group-hover:text-fresh-mint transition-colors">
+                            <div className="flex items-start justify-between gap-1 sm:gap-s1 mb-s1">
+                              <h3 className="font-serif font-bold text-base sm:text-lg leading-snug group-hover:text-fresh-mint transition-colors min-w-0 break-words">
                                 <Link
                                   href={`/iniciativas/${ini.id}`}
                                   className="after:content-[''] after:absolute after:inset-0"

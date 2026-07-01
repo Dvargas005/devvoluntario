@@ -27,7 +27,7 @@ export default function LoginPage() {
 
   if (sent) {
     return (
-      <main className="min-h-screen flex items-center justify-center p-s3">
+      <main className="min-h-screen flex items-center justify-center px-s2 sm:px-s3 py-s5">
         <div className="w-full max-w-sm text-center space-y-s3">
           <h1 className="font-serif text-2xl font-bold">Revisa tu correo</h1>
           <p className="text-muted">
@@ -46,7 +46,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-s3">
+    <main className="min-h-screen flex items-center justify-center px-s2 sm:px-s3 py-s5">
       <div className="w-full max-w-sm space-y-s5">
         <div className="text-center">
           <Link href="/" className="inline-block mb-s3">

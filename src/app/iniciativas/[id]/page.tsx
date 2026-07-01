@@ -93,10 +93,10 @@ export default async function InitiativeDetailPage({
   );
 
   return (
-    <main className="min-h-screen px-s3 py-s5 lg:px-s7 lg:py-s7">
+    <main className="min-h-screen px-s2 sm:px-s3 py-s5 lg:px-s7 lg:py-s7">
       <div className="max-w-3xl mx-auto">
         {/* Nav */}
-        <nav className="flex items-center justify-between mb-s5">
+        <nav className="flex items-center justify-between gap-2 mb-s5">
           <Link
             href="/"
             className="text-sm text-muted hover:text-fresh-mint transition-colors"
@@ -123,7 +123,7 @@ export default async function InitiativeDetailPage({
 
         {/* Header */}
         <header className="mb-s5">
-          <h1 className="font-serif text-3xl lg:text-4xl font-bold mb-s2">
+          <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold mb-s2 break-words">
             {initiative.name}
           </h1>
           {initiative.tagline && (
@@ -453,10 +453,10 @@ function DetailLink({ label, href }: { label: string; href: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-1.5 text-sm text-muted hover:text-fresh-mint transition-colors mb-1"
+      className="flex items-center gap-1.5 text-sm text-muted hover:text-fresh-mint transition-colors mb-1 min-w-0"
     >
-      <span>{label}:</span>
-      <span className="truncate underline underline-offset-2">
+      <span className="shrink-0">{label}:</span>
+      <span className="truncate underline underline-offset-2 min-w-0">
         {href.replace(/^https?:\/\//, "").replace(/\/$/, "")}
       </span>
       <svg

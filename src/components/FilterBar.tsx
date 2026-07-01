@@ -229,7 +229,7 @@ export default function FilterBar() {
 
       {/* Desktop: always visible. Mobile: toggle */}
       <div className={`${open ? "block" : "hidden"} lg:block`}>
-        <div className="border border-border rounded-lg p-s3 lg:p-s4">
+        <div className="border border-border rounded-lg p-s2 sm:p-s3 lg:p-s4">
           {filterContent}
         </div>
       </div>

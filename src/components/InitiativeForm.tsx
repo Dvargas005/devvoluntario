@@ -231,7 +231,7 @@ export default function InitiativeForm({
         <button
           type="submit"
           disabled={submitting}
-          className="px-s4 py-s1 bg-foreground text-bg font-medium rounded-lg hover:bg-muted disabled:opacity-50 transition-colors"
+          className="w-full sm:w-auto px-s4 py-s1 bg-foreground text-bg font-medium rounded-lg hover:bg-muted disabled:opacity-50 transition-colors"
         >
           {submitting ? "Guardando..." : submitLabel}
         </button>
@@ -272,18 +272,18 @@ function CheckboxGroup({
   return (
     <div>
       <p className="text-sm text-muted/80 mb-1.5">{label}</p>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-x-4 gap-y-2">
         {Object.entries(options).map(([val, display]) => (
           <label
             key={val}
-            className="flex items-center gap-1.5 text-xs cursor-pointer"
+            className="flex items-center gap-1.5 text-sm cursor-pointer min-w-0"
           >
             <input
               type="checkbox"
               name={name}
               value={val}
               defaultChecked={defaultSet.has(val)}
-              className="w-3.5 h-3.5 rounded border-border bg-surface accent-fresh-mint"
+              className="w-4 h-4 shrink-0 rounded border-border bg-surface accent-fresh-mint"
             />
             <span className="text-muted/80">{display}</span>
           </label>

@@ -40,7 +40,7 @@ export default async function EditInitiativePage({
     : initiative.description;
 
   return (
-    <main className="min-h-screen px-s3 py-s5 lg:px-s7 lg:py-s7">
+    <main className="min-h-screen px-s2 sm:px-s3 py-s5 lg:px-s7 lg:py-s7">
       <div className="max-w-2xl mx-auto">
         <nav className="mb-s5">
           <Link
@@ -52,7 +52,7 @@ export default async function EditInitiativePage({
         </nav>
 
         <header className="mb-s5">
-          <h1 className="font-serif text-3xl font-bold mb-s1">
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold mb-s1 break-words">
             Editar: {initiative.name}
           </h1>
           <p className="text-muted text-sm">

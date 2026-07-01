@@ -4,12 +4,10 @@ import { useState } from "react";
 import { DEVROLE_LABELS } from "@/lib/labels";
 
 type VolunteerData = {
-  displayName: string;
   roles: string[];
   skills: string[];
   availability: string | null;
   contactPref: string | null;
-  listedPublicly: boolean;
 } | null;
 
 export default function VolunteerForm({
@@ -20,10 +18,6 @@ export default function VolunteerForm({
   defaults: VolunteerData;
 }) {
   const [submitting, setSubmitting] = useState(false);
-  const [listedPublicly, setListedPublicly] = useState(
-    defaults?.listedPublicly ?? true
-  );
-
   const defaultRoles = new Set(defaults?.roles ?? []);
 
   return (
@@ -36,37 +30,32 @@ export default function VolunteerForm({
           setSubmitting(false);
         }
       }}
-      className="space-y-s3 max-w-lg"
+      className="space-y-s3"
     >
-      {/* Display name */}
-      <div>
-        <label className="block text-sm text-muted/80 mb-1">
-          Nombre público *
-        </label>
-        <input
-          name="displayName"
-          required
-          defaultValue={defaults?.displayName ?? ""}
-          placeholder="Tu seudónimo o nombre"
-          className="form-input"
-        />
+      {/* Anti-doxeo notice */}
+      <div className="border border-forest-green/30 rounded-lg px-s3 py-s2 text-sm text-muted leading-relaxed">
+        Se te asigna un identificador anónimo. No pedimos tu nombre.
+        No coordinamos más allá de conectar la necesidad de una app con
+        los voluntarios disponibles del rol requerido.
       </div>
 
       {/* Roles */}
       <div>
-        <p className="text-sm text-muted/80 mb-1.5">Roles que puedes cubrir *</p>
-        <div className="flex flex-wrap gap-2">
+        <p className="text-sm text-muted/80 mb-1.5">
+          Roles que puedes cubrir *
+        </p>
+        <div className="flex flex-wrap gap-x-4 gap-y-2">
           {Object.entries(DEVROLE_LABELS).map(([val, display]) => (
             <label
               key={val}
-              className="flex items-center gap-1.5 text-xs cursor-pointer"
+              className="flex items-center gap-1.5 text-sm cursor-pointer min-w-0"
             >
               <input
                 type="checkbox"
                 name="roles"
                 value={val}
                 defaultChecked={defaultRoles.has(val)}
-                className="w-3.5 h-3.5 rounded border-border bg-surface accent-fresh-mint"
+                className="w-4 h-4 shrink-0 rounded border-border bg-surface accent-fresh-mint"
               />
               <span className="text-muted/80">{display}</span>
             </label>
@@ -100,7 +89,7 @@ export default function VolunteerForm({
         />
       </div>
 
-      {/* Contact preference */}
+      {/* Contact preference (private) */}
       <div>
         <label className="block text-sm text-muted/80 mb-1">
           Preferencia de contacto
@@ -111,44 +100,22 @@ export default function VolunteerForm({
           placeholder="Ej: Telegram @user, Discord, etc."
           className="form-input"
         />
+        <p className="text-xs text-muted/40 mt-1">
+          Dato privado — no se muestra públicamente.
+        </p>
       </div>
-
-      {/* Public listing */}
-      <label className="flex items-center gap-2 cursor-pointer">
-        <input
-          type="hidden"
-          name="listedPublicly"
-          value={listedPublicly ? "true" : "false"}
-        />
-        <button
-          type="button"
-          role="switch"
-          aria-checked={listedPublicly}
-          onClick={() => setListedPublicly(!listedPublicly)}
-          className={`relative w-10 h-5 rounded-full transition-colors ${
-            listedPublicly ? "bg-fresh-mint/40" : "bg-border"
-          }`}
-        >
-          <span
-            className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-foreground transition-transform ${
-              listedPublicly ? "translate-x-5" : ""
-            }`}
-          />
-        </button>
-        <span className="text-sm">Aparecer en el listado público</span>
-      </label>
 
       <div className="pt-s1">
         <button
           type="submit"
           disabled={submitting}
-          className="px-s4 py-s1 bg-foreground text-bg font-medium rounded-lg hover:bg-muted disabled:opacity-50 transition-colors"
+          className="w-full sm:w-auto px-s4 py-s1 bg-foreground text-bg font-medium rounded-lg hover:bg-muted disabled:opacity-50 transition-colors"
         >
           {submitting
             ? "Guardando..."
             : defaults
               ? "Actualizar perfil"
-              : "Registrarme"}
+              : "Registrarme como voluntario"}
         </button>
       </div>
     </form>
