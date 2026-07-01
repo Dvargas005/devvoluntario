@@ -52,7 +52,7 @@ export default function LoginPage() {
           <Link href="/" className="inline-block mb-s3">
             <span
               className="font-serif text-2xl font-bold"
-              style={{ letterSpacing: "-0.03em" }}
+              style={{ letterSpacing: "-0.08em" }}
             >
               DeVVoluntario
             </span>
@@ -78,7 +78,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full py-s1 bg-foreground text-bg font-medium rounded-lg hover:bg-muted disabled:opacity-50 transition-colors"
           >
-            {loading ? "Enviando..." : "Enviar enlace mágico"}
+            {loading ? "Enviando..." : "Send magic link"}
           </button>
         </form>
       </div>

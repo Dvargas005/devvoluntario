@@ -90,7 +90,7 @@ export default async function InitiativeDetailPage({
         <nav className="mb-s5">
           <Link
             href="/"
-            className="text-sm text-muted hover:text-foreground transition-colors"
+            className="text-sm text-muted hover:text-fresh-mint transition-colors"
           >
             &larr; Volver al directorio
           </Link>
@@ -119,7 +119,7 @@ export default async function InitiativeDetailPage({
               href={initiative.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 mt-s3 px-s3 py-s1 text-sm font-medium bg-foreground text-bg rounded-lg hover:bg-muted transition-colors"
+              className="inline-flex items-center gap-2 mt-s3 px-s3 py-s1 text-sm font-medium bg-forest-green text-foreground rounded-lg hover:bg-fresh-mint/20 transition-colors"
             >
               Ir al sitio
               <svg
@@ -140,7 +140,7 @@ export default async function InitiativeDetailPage({
 
         {/* Badges row */}
         <div className="flex flex-wrap gap-2 mb-s5">
-          <span className="text-xs border border-border px-2.5 py-1 rounded-full text-muted/80">
+          <span className="text-xs border border-forest-green/40 px-2.5 py-1 rounded-full text-fresh-mint/70">
             {CATEGORY_LABELS[initiative.primaryCategory] ??
               initiative.primaryCategory}
           </span>

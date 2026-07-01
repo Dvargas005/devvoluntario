@@ -126,8 +126,8 @@ export default async function Home({
             <div>
               <Link href="/" className="block">
                 <h1
-                  className="font-serif text-3xl sm:text-4xl lg:text-[2.75rem] font-bold"
-                  style={{ letterSpacing: "-0.03em" }}
+                  className="font-serif text-2xl sm:text-3xl lg:text-[2.15rem] font-bold"
+                  style={{ letterSpacing: "-0.08em" }}
                 >
                   DeVVoluntario
                 </h1>
@@ -144,7 +144,7 @@ export default async function Home({
             <div className="flex gap-s2">
               <Link
                 href="/login"
-                className="text-sm text-muted hover:text-foreground transition-colors border-b border-border hover:border-foreground pb-0.5"
+                className="text-sm text-muted hover:text-fresh-mint transition-colors border-b border-border hover:border-fresh-mint/40 pb-0.5"
               >
                 Acceder
               </Link>
@@ -195,7 +195,7 @@ export default async function Home({
                       ini.description.startsWith(UNVERIFIED_PREFIX);
                     return (
                       <li key={ini.id}>
-                          <article className="group relative border border-border rounded-lg p-s3 lg:p-s4 hover:bg-surface-hover transition-colors h-full flex flex-col">
+                          <article className="group relative border border-border rounded-lg p-s3 lg:p-s4 hover:bg-surface-hover hover:border-fresh-mint/20 transition-colors h-full flex flex-col">
                             {/* Header: nombre + badges + external link */}
                             <div className="flex items-start justify-between gap-s1 mb-s1">
                               <h3 className="font-serif font-bold text-lg leading-snug group-hover:text-fresh-mint transition-colors">
@@ -268,7 +268,7 @@ export default async function Home({
 
                             {/* Footer: categoría + estado + plataformas */}
                             <div className="flex gap-1.5 flex-wrap mt-auto pt-s1 border-t border-border/50">
-                              <span className="text-[11px] text-muted/80 border border-border px-2 py-0.5 rounded">
+                              <span className="text-[11px] text-fresh-mint/70 border border-forest-green/40 px-2 py-0.5 rounded">
                                 {CATEGORY_LABELS[ini.primaryCategory] ??
                                   ini.primaryCategory}
                               </span>
@@ -296,7 +296,7 @@ export default async function Home({
                     {page > 1 && (
                       <Link
                         href={pageHref(page - 1)}
-                        className="text-sm text-muted hover:text-foreground transition-colors px-3 py-1.5 border border-border rounded-lg hover:border-muted/40"
+                        className="text-sm text-muted hover:text-fresh-mint transition-colors px-3 py-1.5 border border-border rounded-lg hover:border-fresh-mint/30"
                       >
                         Anterior
                       </Link>
@@ -307,7 +307,7 @@ export default async function Home({
                     {page < totalPages && (
                       <Link
                         href={pageHref(page + 1)}
-                        className="text-sm text-muted hover:text-foreground transition-colors px-3 py-1.5 border border-border rounded-lg hover:border-muted/40"
+                        className="text-sm text-muted hover:text-fresh-mint transition-colors px-3 py-1.5 border border-border rounded-lg hover:border-fresh-mint/30"
                       >
                         Siguiente
                       </Link>

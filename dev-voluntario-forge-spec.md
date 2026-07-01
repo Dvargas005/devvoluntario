@@ -296,3 +296,36 @@ Modelo wiki: cualquier usuario autenticado edita cualquier iniciativa. Cada CREA
 ## 8. Fuera de alcance v1
 
 EN/PT (solo ES) · matching automático de solapamientos · moderación pesada / botón reportar · interconexión de APIs entre iniciativas. Todo queda para iteraciones siguientes.
+
+---
+
+## 9. Verificación de dueño de sitio (FAST-FOLLOW — siguiente iteración)
+
+NO construir aún. Registrar para la próxima iteración, junto con el pipeline de
+análisis (§5), con el que comparte el fetch del sitio.
+
+**Objetivo:** dar un badge "Dueño verificado" a una iniciativa cuando quien la
+reclama demuestra control del dominio. Aumenta confianza y frena vandalismo /
+suplantación, sin pedir GitHub ni exponer identidad (compatible con anti-doxeo).
+
+**Método (patrón estándar tipo Google Search Console / Vercel):**
+- Al reclamar una iniciativa, generar un token único por iniciativa+usuario
+  (ej. `devvoluntario-verify=<hash>`).
+- La persona coloca el token en su sitio de una de dos formas:
+  (a) meta tag en el <head>:  <meta name="devvoluntario-verify" content="<hash>">
+  (b) archivo en ruta conocida: /.well-known/devvoluntario.txt con el token.
+- Endpoint hace fetch del sitio (reusa la infra de fetch de §5), busca el token;
+  si lo encuentra, marca la iniciativa como verificada y muestra badge.
+
+**Modelo:** se apoya en Initiative.ownerUserId (convierte el "claim" suave en un
+claim VERIFICADO). Agregar un campo tipo `ownerVerifiedAt: DateTime?`.
+
+**Qué garantiza y qué no:** prueba CONTROL del dominio, no identidad de la
+persona. Suficiente para "dueño del proyecto". No impide que dos miembros del
+mismo equipo verifiquen.
+
+**Limitación:** iniciativas SIN sitio propio (bots de Telegram, apps en URL de
+terceros) no pueden usar este método; quedan sin verificar o requieren otra vía.
+
+**Cuándo:** después de que el flujo core (login, agregar, editar con audit) esté
+sólido y probado con usuarios reales. Construir junto al pipeline de análisis.
