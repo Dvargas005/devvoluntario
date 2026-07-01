@@ -48,5 +48,5 @@ export async function upsertVolunteer(formData: FormData) {
     },
   });
 
-  redirect("/voluntarios");
+  redirect("/voluntarios?registrado=1");
 }

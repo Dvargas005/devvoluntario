@@ -14,8 +14,13 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function VoluntariosPage() {
+export default async function VoluntariosPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const session = await getSession();
+  const justRegistered = searchParams.registrado === "1";
 
   const [helpNeeded, allVolunteers, myVolunteer] = await Promise.all([
     prisma.initiative.findMany({
@@ -36,6 +41,7 @@ export default async function VoluntariosPage() {
       ? prisma.volunteer.findUnique({
           where: { userId: session.user.id },
           select: {
+            displayName: true,
             roles: true,
             skills: true,
             availability: true,
@@ -75,6 +81,29 @@ export default async function VoluntariosPage() {
             con voluntarios disponibles por especialidad. Sin exponer identidades.
           </p>
         </header>
+
+        {/* ─── Confirmation banner ─── */}
+        {justRegistered && myVolunteer && (
+          <div className="border border-forest-green/30 rounded-lg px-s3 py-s3 mb-s7 text-sm leading-relaxed">
+            <p className="text-foreground font-bold mb-s2">
+              Listo. Quedaste registrado como{" "}
+              <span className="text-fresh-mint">{myVolunteer.displayName}</span>.
+            </p>
+            <p className="text-muted mb-s2">
+              Durante estos primeros días la coordinación es manual: revisaremos
+              las apps que buscan apoyo y, si alguna necesita tu especialidad, te
+              contactaremos por el medio que indicaste. No te promocionamos ni
+              publicamos tus datos; solo conectamos la necesidad de una app con
+              los voluntarios disponibles del rol requerido.
+            </p>
+            {!myVolunteer.contactPref && (
+              <p className="text-slate-blue">
+                Agrega una preferencia de contacto para que podamos avisarte.
+              </p>
+            )}
+            <p className="text-muted mt-s2">Gracias por sumarte.</p>
+          </div>
+        )}
 
         {/* ─── Volunteer counter panel ─── */}
         <section className="mb-s7">
