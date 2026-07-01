@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default async function NewInitiativePage() {
   const session = await getSession();
-  if (!session) redirect("/login");
+  if (!session) redirect("/login?callbackUrl=/iniciativas/nueva");
 
   return (
     <main className="min-h-screen px-s2 sm:px-s3 py-s5 lg:px-s7 lg:py-s7">

@@ -16,7 +16,7 @@ import type {
 
 export async function createInitiative(formData: FormData) {
   const session = await getSession();
-  if (!session) redirect("/login");
+  if (!session) throw new Error("No autenticado");
 
   const name = (formData.get("name") as string)?.trim();
   const tagline = (formData.get("tagline") as string)?.trim() || null;
@@ -77,7 +77,7 @@ export async function createInitiative(formData: FormData) {
 
 export async function updateInitiative(formData: FormData) {
   const session = await getSession();
-  if (!session) redirect("/login");
+  if (!session) throw new Error("No autenticado");
 
   const id = formData.get("id") as string;
   if (!id) throw new Error("ID de iniciativa faltante");
@@ -182,7 +182,7 @@ export async function updateInitiative(formData: FormData) {
 
 export async function claimInitiative(formData: FormData) {
   const session = await getSession();
-  if (!session) redirect("/login");
+  if (!session) throw new Error("No autenticado");
 
   const id = formData.get("id") as string;
   if (!id) throw new Error("ID de iniciativa faltante");

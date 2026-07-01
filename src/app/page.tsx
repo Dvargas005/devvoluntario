@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { prisma } from "@/lib/db";
+import { getSession } from "@/lib/auth-server";
 import {
   CATEGORY_LABELS,
   STATUS_LABELS,
@@ -81,6 +82,8 @@ export default async function Home({
   const page = Math.max(1, parseInt(params.page || "1", 10));
   const where = buildWhere(params);
 
+  const session = await getSession();
+
   const [initiatives, totalCount] = await Promise.all([
     prisma.initiative.findMany({
       where,
@@ -148,24 +151,28 @@ export default async function Home({
 
             {/* Acciones */}
             <div className="flex flex-wrap gap-s2">
-              <Link
-                href="/iniciativas/nueva"
-                className="text-sm text-fresh-mint hover:text-foreground transition-colors border-b border-fresh-mint/30 hover:border-foreground/40 pb-0.5"
-              >
-                + Registrar iniciativa
-              </Link>
+              {session && (
+                <Link
+                  href="/iniciativas/nueva"
+                  className="text-sm text-fresh-mint hover:text-foreground transition-colors border-b border-fresh-mint/30 hover:border-foreground/40 pb-0.5"
+                >
+                  + Registrar iniciativa
+                </Link>
+              )}
               <Link
                 href="/voluntarios"
                 className="text-sm text-muted hover:text-fresh-mint transition-colors border-b border-border hover:border-fresh-mint/40 pb-0.5"
               >
                 Voluntarios
               </Link>
-              <Link
-                href="/login"
-                className="text-sm text-muted hover:text-fresh-mint transition-colors border-b border-border hover:border-fresh-mint/40 pb-0.5"
-              >
-                Acceder
-              </Link>
+              {!session && (
+                <Link
+                  href="/login"
+                  className="text-sm text-muted hover:text-fresh-mint transition-colors border-b border-border hover:border-fresh-mint/40 pb-0.5"
+                >
+                  Acceder
+                </Link>
+              )}
             </div>
 
           </div>

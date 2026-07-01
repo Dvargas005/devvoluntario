@@ -8,7 +8,7 @@ import type { DevRole } from "@/generated/prisma/client";
 
 export async function upsertVolunteer(formData: FormData) {
   const session = await getSession();
-  if (!session) redirect("/login");
+  if (!session) throw new Error("No autenticado");
 
   const roles = formData.getAll("roles") as DevRole[];
   const skillsRaw = (formData.get("skills") as string)?.trim();

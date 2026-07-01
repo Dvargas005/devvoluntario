@@ -26,11 +26,12 @@ export default async function EditInitiativePage({
 }: {
   params: { id: string };
 }) {
+  const { id } = params;
   const session = await getSession();
-  if (!session) redirect("/login");
+  if (!session) redirect(`/login?callbackUrl=/iniciativas/${id}/editar`);
 
   const initiative = await prisma.initiative.findUnique({
-    where: { id: params.id },
+    where: { id },
   });
   if (!initiative) notFound();
 
