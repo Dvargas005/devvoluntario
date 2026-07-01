@@ -8,6 +8,7 @@ type VolunteerData = {
   skills: string[];
   availability: string | null;
   contactPref: string | null;
+  consentToShare: boolean;
 } | null;
 
 export default function VolunteerForm({
@@ -103,6 +104,24 @@ export default function VolunteerForm({
         <p className="text-xs text-muted/40 mt-1">
           Dato privado — no se muestra públicamente.
         </p>
+      </div>
+
+      {/* Consent to share contact */}
+      <div>
+        <label className="flex items-start gap-2 text-sm cursor-pointer">
+          <input
+            type="checkbox"
+            name="consentToShare"
+            value="true"
+            defaultChecked={defaults?.consentToShare ?? false}
+            className="w-4 h-4 shrink-0 mt-0.5 rounded border-border bg-surface accent-fresh-mint"
+          />
+          <span className="text-muted/80 leading-relaxed">
+            Acepto que mi medio de contacto se comparta con responsables
+            verificados de proyecto cuando mi perfil coincida con una
+            necesidad.
+          </span>
+        </label>
       </div>
 
       {/* No-payment rule */}

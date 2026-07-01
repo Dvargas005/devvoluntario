@@ -10,6 +10,7 @@ import {
   DEVROLE_LABELS,
   REGION_LABELS,
 } from "@/lib/labels";
+import RequestMatchButton from "@/components/RequestMatchButton";
 import type { Metadata } from "next";
 
 const UNVERIFIED_PREFIX = "[Datos por confirmar]";
@@ -62,6 +63,8 @@ export default async function InitiativeDetailPage({
 
   const isLoggedIn = !!session;
   const canClaim = isLoggedIn && !initiative.ownerUserId;
+  const isOwner =
+    isLoggedIn && initiative.ownerUserId === session!.user.id;
 
   // ─── Solapamientos: misma categoría y/o misma zona ───
   const [sameCategory, sameRegion] = await Promise.all([
@@ -91,6 +94,39 @@ export default async function InitiativeDetailPage({
   const uniqueSameRegion = sameRegion.filter(
     (i) => !sameCategoryIds.has(i.id)
   );
+
+  // Volunteer candidates: only for owner of claimed project with needsHelp
+  const showCandidates = isOwner && initiative.needsHelp;
+  const candidates = showCandidates
+    ? await prisma.volunteer.findMany({
+        where: {
+          consentToShare: true,
+          roles: { hasSome: initiative.neededRoles },
+          // Exclude the owner's own volunteer profile
+          userId: { not: session!.user.id },
+        },
+        select: {
+          id: true,
+          displayName: true,
+          roles: true,
+          skills: true,
+          availability: true,
+        },
+      })
+    : [];
+
+  // Existing matches for this initiative
+  const existingMatches = showCandidates
+    ? await prisma.match.findMany({
+        where: { initiativeId: initiative.id },
+        select: { volunteerId: true, role: true, status: true },
+      })
+    : [];
+
+  const matchMap = new Map<string, string>();
+  for (const m of existingMatches) {
+    matchMap.set(`${m.volunteerId}:${m.role}`, m.status);
+  }
 
   return (
     <main className="min-h-screen px-s2 sm:px-s3 py-s5 lg:px-s7 lg:py-s7">
@@ -325,6 +361,118 @@ export default async function InitiativeDetailPage({
               ¿Es tu proyecto? Inicia sesión para reclamar autoría
             </Link>
           </div>
+        )}
+
+        {/* ─── Voluntarios disponibles (solo para el owner) ─── */}
+        {showCandidates && candidates.length > 0 && (
+          <section className="border-t border-border pt-s5 mb-s7">
+            <h2 className="font-serif text-xl font-bold mb-s1">
+              Voluntarios disponibles
+            </h2>
+            <p className="text-muted text-sm mb-s3">
+              Perfiles que coinciden con los roles que necesitas. Al
+              solicitar conexión, el voluntario recibirá un correo y
+              decidirá si acepta compartir su contacto contigo.
+            </p>
+            <ul className="space-y-3">
+              {candidates.map((vol) => {
+                const matchingRoles = vol.roles.filter((r) =>
+                  initiative.neededRoles.includes(r)
+                );
+                return (
+                  <li
+                    key={vol.id}
+                    className="border border-border rounded-lg p-s3"
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-s1">
+                      <span className="text-sm font-medium">
+                        {vol.displayName}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1 mb-s1">
+                      {vol.roles.map((role) => (
+                        <span
+                          key={role}
+                          className={`text-[11px] px-2 py-0.5 rounded ${
+                            initiative.neededRoles.includes(role)
+                              ? "text-fresh-mint border border-fresh-mint/30"
+                              : "text-muted/60 border border-border/50"
+                          }`}
+                        >
+                          {DEVROLE_LABELS[role] ?? role}
+                        </span>
+                      ))}
+                    </div>
+                    {vol.skills.length > 0 && (
+                      <p className="text-xs text-muted/60 mb-s1">
+                        {vol.skills.join(", ")}
+                      </p>
+                    )}
+                    {vol.availability && (
+                      <p className="text-xs text-muted/40 mb-s2">
+                        {vol.availability}
+                      </p>
+                    )}
+                    <div className="flex flex-wrap gap-2">
+                      {matchingRoles.map((role) => {
+                        const key = `${vol.id}:${role}`;
+                        const matchStatus = matchMap.get(key);
+                        if (matchStatus === "PENDING") {
+                          return (
+                            <span
+                              key={role}
+                              className="text-xs text-slate-blue border border-slate-blue/30 px-2 py-0.5 rounded"
+                            >
+                              {DEVROLE_LABELS[role]}: Pendiente
+                            </span>
+                          );
+                        }
+                        if (matchStatus === "ACCEPTED") {
+                          return (
+                            <span
+                              key={role}
+                              className="text-xs text-fresh-mint border border-fresh-mint/30 px-2 py-0.5 rounded"
+                            >
+                              {DEVROLE_LABELS[role]}: Aceptado
+                            </span>
+                          );
+                        }
+                        if (matchStatus === "DECLINED") {
+                          return (
+                            <span
+                              key={role}
+                              className="text-xs text-muted/40 border border-border/50 px-2 py-0.5 rounded"
+                            >
+                              {DEVROLE_LABELS[role]}: Rechazado
+                            </span>
+                          );
+                        }
+                        return (
+                          <RequestMatchButton
+                            key={role}
+                            initiativeId={initiative.id}
+                            volunteerId={vol.id}
+                            role={role}
+                          />
+                        );
+                      })}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+
+        {showCandidates && candidates.length === 0 && (
+          <section className="border-t border-border pt-s5 mb-s7">
+            <h2 className="font-serif text-xl font-bold mb-s1">
+              Voluntarios disponibles
+            </h2>
+            <p className="text-muted text-sm">
+              Aún no hay voluntarios registrados con los roles que necesitas.
+            </p>
+          </section>
         )}
 
         {/* ─── Solapamientos ─── */}

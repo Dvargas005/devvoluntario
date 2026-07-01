@@ -17,6 +17,7 @@ export async function upsertVolunteer(formData: FormData) {
     : [];
   const availability = (formData.get("availability") as string)?.trim() || null;
   const contactPref = (formData.get("contactPref") as string)?.trim() || null;
+  const consentToShare = formData.get("consentToShare") === "true";
 
   if (roles.length === 0) {
     throw new Error("Selecciona al menos un rol");
@@ -38,6 +39,7 @@ export async function upsertVolunteer(formData: FormData) {
       skills,
       availability,
       contactPref,
+      consentToShare,
       listedPublicly: false,
     },
     update: {
@@ -45,6 +47,7 @@ export async function upsertVolunteer(formData: FormData) {
       skills,
       availability,
       contactPref,
+      consentToShare,
     },
   });
 

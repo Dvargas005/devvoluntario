@@ -143,6 +143,12 @@ enum AuditAction {
   REVERT
 }
 
+enum MatchStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
 // ========================
 // App models
 // ========================
@@ -182,6 +188,7 @@ model Initiative {
   updatedAt       DateTime         @updatedAt
 
   audit           AuditEntry[]
+  matches         Match[]
 
   @@index([primaryCategory])
   @@index([status])
@@ -202,15 +209,33 @@ model AuditEntry {
 }
 
 model Volunteer {
-  id             String    @id @default(cuid())
-  userId         String    @unique
-  user           user      @relation(fields: [userId], references: [id])
-  displayName    String
-  roles          DevRole[]
-  skills         String[]
-  availability   String?
-  contactPref    String?
-  listedPublicly Boolean   @default(true)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            user      @relation(fields: [userId], references: [id])
+  displayName     String
+  roles           DevRole[]
+  skills          String[]
+  availability    String?
+  contactPref     String?
+  consentToShare  Boolean   @default(false)
+  listedPublicly  Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  matches         Match[]
+}
+
+model Match {
+  id            String      @id @default(cuid())
+  initiativeId  String
+  initiative    Initiative  @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  volunteerId   String
+  volunteer     Volunteer   @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  role          DevRole
+  status        MatchStatus @default(PENDING)
+  token         String      @unique @default(cuid())
+  createdAt     DateTime    @default(now())
+  respondedAt   DateTime?
+
+  @@unique([initiativeId, volunteerId, role])
+  @@index([token])
 }

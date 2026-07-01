@@ -47,6 +47,7 @@ export default async function VoluntariosPage({
             skills: true,
             availability: true,
             contactPref: true,
+            consentToShare: true,
           },
         })
       : null,
