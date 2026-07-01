@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
@@ -15,7 +16,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await authClient.signIn.magicLink({ email });
+      await authClient.signIn.magicLink({ email, callbackURL: "/" });
       setSent(true);
     } catch {
       setError("No se pudo enviar el enlace. Intenta de nuevo.");
@@ -26,16 +27,16 @@ export default function LoginPage() {
 
   if (sent) {
     return (
-      <main className="min-h-screen flex items-center justify-center p-4 font-[family-name:var(--font-geist-sans)]">
-        <div className="w-full max-w-sm text-center space-y-4">
-          <h1 className="text-2xl font-bold">Revisa tu correo</h1>
-          <p className="text-gray-600">
-            Enviamos un enlace de acceso a <strong>{email}</strong>. Haz clic en
+      <main className="min-h-screen flex items-center justify-center p-s3">
+        <div className="w-full max-w-sm text-center space-y-s3">
+          <h1 className="font-serif text-2xl font-bold">Revisa tu correo</h1>
+          <p className="text-muted">
+            Enviamos un enlace de acceso a <strong className="text-foreground">{email}</strong>. Haz clic en
             él para entrar.
           </p>
           <button
             onClick={() => setSent(false)}
-            className="text-sm text-blue-600 hover:underline"
+            className="text-sm text-fresh-mint hover:underline"
           >
             Usar otro correo
           </button>
@@ -45,29 +46,37 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-4 font-[family-name:var(--font-geist-sans)]">
-      <div className="w-full max-w-sm space-y-6">
+    <main className="min-h-screen flex items-center justify-center p-s3">
+      <div className="w-full max-w-sm space-y-s5">
         <div className="text-center">
-          <h1 className="text-2xl font-bold">Acceder a Dev Voluntario</h1>
-          <p className="text-gray-600 mt-2">
+          <Link href="/" className="inline-block mb-s3">
+            <span
+              className="font-serif text-2xl font-bold"
+              style={{ letterSpacing: "-0.03em" }}
+            >
+              DeVVoluntario
+            </span>
+          </Link>
+          <h1 className="text-xl font-bold">Acceder</h1>
+          <p className="text-muted text-sm mt-s1">
             Ingresa tu correo para recibir un enlace de acceso.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-s3">
           <input
             type="email"
             required
             placeholder="tu@correo.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-s2 py-s1 bg-surface text-foreground border border-border rounded-lg placeholder:text-muted/50 focus:outline-none focus:ring-1 focus:ring-fresh-mint/50 focus:border-fresh-mint/50"
           />
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {error && <p className="text-red-400 text-sm">{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50"
+            className="w-full py-s1 bg-foreground text-bg font-medium rounded-lg hover:bg-muted disabled:opacity-50 transition-colors"
           >
             {loading ? "Enviando..." : "Enviar enlace mágico"}
           </button>

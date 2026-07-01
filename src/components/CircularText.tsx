@@ -1,35 +1,30 @@
 "use client";
 
-import { useEffect } from "react";
-import { motion, useAnimation, useMotionValue } from "motion/react";
-
-const getRotationTransition = (
-  duration: number,
-  from: number,
-  loop = true
-) => ({
-  from,
-  to: from + 360,
-  ease: "linear" as const,
-  duration,
-  type: "tween" as const,
-  repeat: loop ? Infinity : 0,
-});
-
-const getTransition = (duration: number, from: number) => ({
-  rotate: getRotationTransition(duration, from),
-  scale: {
-    type: "spring" as const,
-    damping: 20,
-    stiffness: 300,
-  },
-});
+import { useEffect, useId, useRef, useState } from "react";
+import { motion, useAnimationControls } from "motion/react";
 
 interface CircularTextProps {
   text: string;
   spinDuration?: number;
-  onHover?: "speedUp" | "slowDown" | "pause" | "goBonkers";
+  onHover?: "speedUp" | "slowDown" | "pause";
   className?: string;
+  size?: number;
+}
+
+function startSpin(
+  controls: ReturnType<typeof useAnimationControls>,
+  duration: number
+) {
+  controls.start({
+    rotate: [0, 360],
+    transition: {
+      rotate: {
+        ease: "linear",
+        duration,
+        repeat: Infinity,
+      },
+    },
+  });
 }
 
 export default function CircularText({
@@ -37,87 +32,74 @@ export default function CircularText({
   spinDuration = 20,
   onHover = "speedUp",
   className = "",
+  size = 200,
 }: CircularTextProps) {
-  const letters = Array.from(text);
-  const controls = useAnimation();
-  const rotation = useMotionValue(0);
+  const id = useId();
+  const pathId = `circular-path-${id}`;
+  const controls = useAnimationControls();
+  const [hovered, setHovered] = useState(false);
+  const currentDuration = useRef(spinDuration);
+
+  const r = size / 2 - 16;
+  const cx = size / 2;
+  const cy = size / 2;
 
   useEffect(() => {
-    const start = rotation.get();
-    controls.start({
-      rotate: start + 360,
-      scale: 1,
-      transition: getTransition(spinDuration, start),
-    });
-  }, [spinDuration, text, onHover, controls, rotation]);
+    const duration = hovered
+      ? onHover === "speedUp"
+        ? spinDuration / 4
+        : onHover === "slowDown"
+          ? spinDuration * 2
+          : spinDuration
+      : spinDuration;
 
-  const handleHoverStart = () => {
-    const start = rotation.get();
-    if (!onHover) return;
-
-    let transitionConfig;
-    let scaleVal = 1;
-
-    switch (onHover) {
-      case "slowDown":
-        transitionConfig = getTransition(spinDuration * 2, start);
-        break;
-      case "speedUp":
-        transitionConfig = getTransition(spinDuration / 4, start);
-        break;
-      case "pause":
-        transitionConfig = {
-          rotate: { type: "spring" as const, damping: 20, stiffness: 300 },
-          scale: { type: "spring" as const, damping: 20, stiffness: 300 },
-        };
-        scaleVal = 1;
-        break;
-      case "goBonkers":
-        transitionConfig = getTransition(spinDuration / 20, start);
-        scaleVal = 0.8;
-        break;
-      default:
-        transitionConfig = getTransition(spinDuration, start);
+    if (hovered && onHover === "pause") {
+      controls.stop();
+      return;
     }
 
-    controls.start({
-      rotate: start + 360,
-      scale: scaleVal,
-      transition: transitionConfig,
-    });
-  };
-
-  const handleHoverEnd = () => {
-    const start = rotation.get();
-    controls.start({
-      rotate: start + 360,
-      scale: 1,
-      transition: getTransition(spinDuration, start),
-    });
-  };
+    currentDuration.current = duration;
+    startSpin(controls, duration);
+  }, [spinDuration, hovered, onHover, controls]);
 
   return (
     <motion.div
-      className={`circular-text ${className}`}
-      style={{ rotate: rotation }}
-      initial={{ rotate: 0 }}
+      className={className}
+      style={{
+        width: size,
+        height: size,
+        cursor: "pointer",
+      }}
       animate={controls}
-      onMouseEnter={handleHoverStart}
-      onMouseLeave={handleHoverEnd}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      {letters.map((letter, i) => {
-        const rotationDeg = (360 / letters.length) * i;
-        const factor = Math.PI / letters.length;
-        const x = factor * i;
-        const y = factor * i;
-        const transform = `rotateZ(${rotationDeg}deg) translate3d(${x}px, ${y}px, 0)`;
-
-        return (
-          <span key={i} style={{ transform, WebkitTransform: transform }}>
-            {letter}
-          </span>
-        );
-      })}
+      <svg
+        viewBox={`0 0 ${size} ${size}`}
+        width={size}
+        height={size}
+        aria-hidden="true"
+      >
+        <defs>
+          <path
+            id={pathId}
+            d={`M ${cx},${cy - r} A ${r},${r} 0 1,1 ${cx - 0.01},${cy - r}`}
+          />
+        </defs>
+        <text
+          fill="currentColor"
+          style={{
+            fontSize: 13,
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            fontFamily: "var(--font-sans)",
+          }}
+        >
+          <textPath href={`#${pathId}`} startOffset="0%">
+            {text}
+          </textPath>
+        </text>
+      </svg>
     </motion.div>
   );
 }

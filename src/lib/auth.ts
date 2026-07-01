@@ -9,6 +9,8 @@ const resendApiKey = process.env.RESEND_API_KEY;
 const resendClient = resendApiKey ? new Resend(resendApiKey) : null;
 
 export const auth = betterAuth({
+  baseURL: process.env.BETTER_AUTH_URL,
+  trustedOrigins: [process.env.BETTER_AUTH_URL || "http://localhost:3000"],
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   databaseHooks: {
     user: {
