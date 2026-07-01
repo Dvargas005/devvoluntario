@@ -19,6 +19,7 @@ model user {
   image         String?
   displayName   String?
   isPublic      Boolean   @default(false)
+  role          UserRole  @default(USER)
   createdAt     DateTime
   updatedAt     DateTime
 
@@ -71,6 +72,11 @@ model verification {
 // ========================
 // Enums
 // ========================
+
+enum UserRole {
+  USER
+  ADMIN
+}
 
 enum InitiativeStatus {
   IDEA

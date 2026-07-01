@@ -110,6 +110,95 @@ export default function AcercaPage() {
           </ul>
         </Section>
 
+        {/* ─── No-payment rule ─── */}
+        <Section title="Regla de no-pago">
+          <p className="mb-s3">
+            Dev Voluntario es un directorio sin fines de lucro. Todo el
+            trabajo aquí es voluntario.
+          </p>
+          <ul className="space-y-3">
+            <Li>
+              <strong className="text-foreground">Ninguna iniciativa debe cobrarte:</strong>{" "}
+              Si algún proyecto listado en este directorio te solicita un
+              pago por participar como voluntario, repórtalo. Eso va en
+              contra de las reglas.
+            </Li>
+            <Li>
+              <strong className="text-foreground">No cobramos comisiones:</strong>{" "}
+              Dev Voluntario no cobra ni a iniciativas ni a voluntarios.
+              No hay tarifas ocultas ni planes premium.
+            </Li>
+            <Li>
+              <strong className="text-foreground">Sin donaciones integradas:</strong>{" "}
+              No manejamos dinero. Si una iniciativa necesita fondos, lo
+              gestiona fuera de esta plataforma y bajo su propia
+              responsabilidad.
+            </Li>
+          </ul>
+        </Section>
+
+        {/* ─── How volunteer assignment works ─── */}
+        <Section title="Cómo funciona la asignación de voluntarios">
+          <p className="mb-s3">
+            En estos primeros días, la coordinación es manual y
+            transparente:
+          </p>
+          <ol className="space-y-3 list-decimal list-inside">
+            <li className="text-muted leading-relaxed">
+              <strong className="text-foreground">Te registras</strong>{" "}
+              indicando tus roles y habilidades. Se te asigna un seudónimo
+              anónimo.
+            </li>
+            <li className="text-muted leading-relaxed">
+              <strong className="text-foreground">Revisamos las iniciativas</strong>{" "}
+              que marcaron «Necesita voluntarios» y los roles que buscan.
+            </li>
+            <li className="text-muted leading-relaxed">
+              <strong className="text-foreground">Si hay un match</strong>{" "}
+              entre lo que una iniciativa necesita y tu especialidad, te
+              contactamos por el medio que indicaste.
+            </li>
+            <li className="text-muted leading-relaxed">
+              <strong className="text-foreground">Tú decides</strong>{" "}
+              si quieres participar. No hay obligación ni compromiso.
+            </li>
+          </ol>
+          <p className="mt-s3 text-muted/60 text-sm">
+            El objetivo es automatizar este proceso cuando haya masa
+            crítica, pero por ahora priorizamos coordinación humana para
+            asegurarnos de que funcione bien.
+          </p>
+        </Section>
+
+        {/* ─── Immediate roadmap ─── */}
+        <Section title="Roadmap inmediato">
+          <p className="mb-s3">
+            Lo que estamos trabajando ahora o planeamos a corto plazo:
+          </p>
+          <ul className="space-y-3">
+            <Li>
+              <strong className="text-foreground">Match automático:</strong>{" "}
+              Notificar automáticamente a voluntarios cuando una iniciativa
+              busque su especialidad.
+            </Li>
+            <Li>
+              <strong className="text-foreground">Verificación de iniciativas:</strong>{" "}
+              Marcar los datos que han sido confirmados por sus
+              creadores vs. los que son inferidos.
+            </Li>
+            <Li>
+              <strong className="text-foreground">Análisis automático:</strong>{" "}
+              Extraer datos de las URLs de las iniciativas para enriquecer
+              el directorio (tech stack, estado, etc.).
+            </Li>
+            <Li>
+              <strong className="text-foreground">Métricas de respuesta:</strong>{" "}
+              Dashboard público con estadísticas agregadas del ecosistema
+              de respuesta tecnológica.
+            </Li>
+          </ul>
+        </Section>
+
         {/* ─── FAQ ─── */}
         <Section title="Preguntas frecuentes">
           <div className="space-y-s4">

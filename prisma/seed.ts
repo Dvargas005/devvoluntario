@@ -166,6 +166,7 @@ async function main() {
     update: {
       displayName: SEED_USER.displayName,
       isPublic: SEED_USER.isPublic,
+      role: "ADMIN",
     },
     create: {
       ...SEED_USER,

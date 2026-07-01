@@ -226,6 +226,12 @@ export default function InitiativeForm({
         )}
       </div>
 
+      {/* No-payment rule */}
+      <p className="text-xs text-muted/40 leading-relaxed">
+        Dev Voluntario es un directorio sin fines de lucro. No solicites ni
+        aceptes pagos a través de esta plataforma.
+      </p>
+
       {/* Submit */}
       <div className="pt-s2">
         <button

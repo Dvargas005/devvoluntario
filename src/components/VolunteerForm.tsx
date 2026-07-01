@@ -105,6 +105,13 @@ export default function VolunteerForm({
         </p>
       </div>
 
+      {/* No-payment rule */}
+      <p className="text-xs text-muted/40 leading-relaxed">
+        Este es un directorio voluntario sin fines de lucro. Ninguna
+        iniciativa listada aquí debería solicitarte pagos ni cobros de
+        ningún tipo por participar.
+      </p>
+
       <div className="pt-s1">
         <button
           type="submit"
