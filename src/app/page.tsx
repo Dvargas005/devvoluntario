@@ -10,6 +10,7 @@ import {
 } from "@/lib/labels";
 
 import FilterBar from "@/components/FilterBar";
+import SignOutButton from "@/components/SignOutButton";
 import type { Prisma } from "@/generated/prisma/client";
 
 const UNVERIFIED_PREFIX = "[Datos por confirmar]";
@@ -83,6 +84,15 @@ export default async function Home({
   const where = buildWhere(params);
 
   const session = await getSession();
+
+  const displayName = session
+    ? (
+        await prisma.user.findUnique({
+          where: { id: session.user.id },
+          select: { displayName: true },
+        })
+      )?.displayName ?? null
+    : null;
 
   const [initiatives, totalCount] = await Promise.all([
     prisma.initiative.findMany({
@@ -165,7 +175,14 @@ export default async function Home({
               >
                 Voluntarios
               </Link>
-              {!session && (
+              {session ? (
+                <>
+                  <span className="text-sm text-muted">
+                    {displayName ?? "Usuario"}
+                  </span>
+                  <SignOutButton />
+                </>
+              ) : (
                 <Link
                   href="/login"
                   className="text-sm text-muted hover:text-fresh-mint transition-colors border-b border-border hover:border-fresh-mint/40 pb-0.5"
